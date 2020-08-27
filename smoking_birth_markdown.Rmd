@@ -1,0 +1,162 @@
+---
+title: "Assignment 3 1001569732"
+author:
+- "Ted Si Yuan Cheng"
+- "Student ID: 1001569732"
+date: '2018-03-17'
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Part 1 - Research Article Review on Prevention of relapse/recurrence in Major Depressive Disorder with either Mindfulness-Based Cognitive Therapy Or Cognitive Therapy - 1001569732
+## 1. My selected field of interest was with regards to psychology, specifically preventing relapse of major depressive disorder with mindfulness-based cognitive therapy or cognitive therapy
+
+## 2. Farb, N., et al. "Prevention of relapse/recurrence in Major Depressive Disorder with either Mindfulness-Based Cognitive Therapy Or Cognitive Therapy." Journal of Consulting and Clinical Psychology, vol. 86, no. 2, 2018, pp. 200-204, SCOPUS, www.scopus.com, doi:10.1037/ccp0000266.
+
+## 3. The Department of Psychology, University of Toronto Mississauga
+
+## 4. https://journals-scholarsportal-info.myaccess.library.utoronto.ca/details/0022006x/v86i0002/200_porimdmctoct.xml
+
+## 5. It is unknown, but possibly SPSS as it is generally used in psychology 
+
+## 6. The data was derived from a treatment based study, as subjects were given either cognitive therapy or mindfulness-based cognitive therapy for their treatments. 
+
+## 7. The article provided summary statistics, tables, and plots for the time taken to relapse following the two different cognitive therapy treatments. There was a table measuring the values, std errors, df, t-values, and p-values for the interaction of time and relapse status, time and group, relapse status and group, and time and relapse status and group. There were also tables on the relapse rates for each treatment and a box plot comparing relapse and remission time of experiences questionnaires and the dysfuntional attitude scales. 
+
+## 8. Although not explicitly given, they do state that They predict that relapse rates between the two interventions would not differ significantly. Meaning their $H_0$ would be the two interventions do differ, while $H_a$ would be they do not differ. Confidence intervas were given at 95% CI for the effects of time, group, relapse, time and group, and time and relapse for the experiences questionnaires and dysfunctional attitutdes scales. P-values were provided as well for those variables, but no distribution was given other than using the $t$ test and $X^2$ test.
+
+## 9. Values were reported to two decimal places. There was no specific reason as to why. 
+
+## 10. The $t$ test and $X^2$ test were both used to test differences in demographics and clinical history variables. 
+
+\newpage
+
+# Part 2 - Contingency Tables - 1001569732 
+
+## 1.
+### (a)
+```{r, echo=FALSE}
+#Read video data
+video <- read.csv("C:\\Users\\Ted\\Documents\\School\\STA303\\Assignments\\3\\video.csv")
+```
+
+```{r, echo=FALSE}
+#2x2 contingency table of sex by likes
+sexlike <- matrix(c(12,8,26,44), nrow=2, byrow=TRUE)
+dimnames(sexlike) <- list(c("no","yes"), c("female","male"))
+names(dimnames(sexlike)) <- c("like", "sex")
+sexlike
+
+```
+
+```{r, echo=FALSE, results='hide'}
+#Test for independency with Chi-Square and Fisher's test
+chisq.test(sexlike, correct=FALSE)
+fisher.test(sexlike)
+
+```
+Using the Chi-Square test setting Yate's Continuity Correction to false, we get that the p-value is 0.06797, which is > 0.05, so we can not reject the null hypothesis that there is no relationship between sex and preference for video games.
+
+Using Fisher's Exact test, we get that the p-value is 0.07824, which is still > 0.05, so we can not reject the null hypothesis that there is no relationship between sex and preference for video games.
+
+We see that the 95% CI is [0.82, 8.11] from Fisher's exact test, which contains 1. This is more supporting evidence that the p-value is > 0.05 and that there is evidence of association between the variables.
+
+### (b)
+```{r, echo=FALSE, results='hide', warning=FALSE}
+
+table(video)
+
+#Grade A
+gradeA <- matrix(c(5,1,4,21), nrow=2, byrow=TRUE)
+dimnames(gradeA) <- list(c("no","yes"), c("female","male"))
+names(dimnames(gradeA)) <- c("like", "sex")
+
+#Grade NA
+gradeNA <- matrix(c(7,7,22,23), nrow=2, byrow=TRUE)
+dimnames(gradeNA) <- list(c("no","yes"), c("female","male"))
+names(dimnames(gradeNA)) <- c("like", "sex")
+
+#Chi-Square test for independency 
+chisq.test(gradeA, correct=FALSE)
+chisq.test(gradeNA, correct=FALSE)
+
+```
+From the Chi-Square test for the contingency table where the grades are A, we see that the p-value is 0.001102 < 0.05, meaning we can reject the null hypothesis that there is no relationship between sex and preference for video games with students who expect to get A's and say that there is an association them. 
+
+For grade = NA, p-value is 0.9421 > 0.05, so we can not reject the null hypothesis that there is no relationship between sex and preference for video games with students who don't expect to get A's.
+
+## 2.
+### (a)
+```{r, echo=FALSE, results='hide'}
+
+#Sex and grade models
+
+attach(video)
+sex = as.factor(sex)
+like <- as.factor(like)
+grade <- as.factor(grade)
+model_2.1 <- glm(like ~ sex*grade, family = binomial, data = video)
+model_2.2 <- glm(like ~ sex+grade, family = binomial, data = video)
+summary(model_2.1)
+summary(model_2.2)
+
+#LRT and Wald test
+library(aod)
+anova(model_2.1, model_2.2, test="Chisq")
+wald.test(Sigma = vcov(model_2.1), b=coef(model_2.1), Terms = 4)
+
+```
+
+The saturated model 2.1 would be $log(\pi/1-\pi)$ = $\beta_0$ + $\beta_1I_{sex=male}$ + $\beta_2I_{grade=nA}$ + $\beta_3I_{sex=male}*I_{grade=nA}$, where $\beta_0$ is the intercept of the logistic regression line (the expected value of like when all other parameters are 0), $\beta_1I_{sex}$ is the coefficient if sex is 1 (female = 0, male = 1), $\beta_2I_{grade}$ is the coefficient if they expect an A is 1 (nA = 0, A = 1), and $\beta_3I{sex}*I_{grade}$ is the interaction coefficient of sex and grade if there is interaction. 
+
+The independent model 2.2 would be $log(\pi/1-\pi)$ = $\beta_0$ + $\beta_1I_{sex=male}$ + $\beta_2I_{grade=nA}$, where the parameters are the same as the saturated model 2.1 but $\beta_3I_{sex}*I_{grade}$ = 0 (no interaction).
+
+Using the likelihood ratio test, we see that p-value = 0.0087 < 0.05, and the Wald Test produces a p-value = 0.018 < 0.05. From the likelihood ratio test we see that there is evidence to reject that the additive model is better. From the wald test we also see that there is evidence that the interaction between sex and grade expected is significant. 
+
+### (b)
+A practical way of utilizing the model is to see if males or females who expect an A or not will prefer playing video games or not. We can see if the interaction between being a certain gender and expecting a an A or not has correlation to whether or not they prefer playing video games. We do see that the interaction model is adequate from the likelihood ratio test, and that there is interaction between sex and grade expected for those who expect an A, supporting 1(b) that there is evidence of association between sex and preference for those who expect to get A's  
+
+## 3
+### (a)
+```{r, echo=FALSE, results='hide', include=FALSE}
+
+videodf <- data.frame(table(video))
+detach(video)
+attach(videodf)
+
+#Saturated and no reduced models
+model_3.1 <- glm(Freq~sex*grade*like, family = poisson, data=videodf)
+model_3.2 <- glm(Freq~sex+grade+like+sex:grade+sex:like+grade:like, family = poisson, data=videodf)
+summary(model_3.1)
+summary(model_3.2)
+
+```
+The saturated model 3.1 would be $log(\mu_i)$ = $\beta_0$ + $\beta_1I_{sex=male}$ + $\beta_2I_{grade=nA}$ + $\beta_3I_{like=yes}$ + $\beta_4I_{sex}*I_{grade}$ + $\beta_5I_{sex}*I_{like}$ + $\beta_6I{grade}*I_{like}$ + $\beta_7I_{sex}*I_{grade}*I_{like}$, where $\beta_0$ is the intercept of the log-linear model line (the expected value of count when all other parameters are 0), $\beta_1I_{sex}$ is the coefficient if sex is 1 (female = 0, male = 1), $\beta_2I_{grade}$ is the coefficient if grade is 1 (expect an A = 1, nA = 0), $\beta_3I_{like}$ is the coefficient if like is 1 (no = 0, yes = 1), and  $\beta_4I_{sex}*I_{grade}$ is the coefficient of sex and grade if there is an interaction. $\beta_5I_{sex}*I_{like}$ is coefficient of sex and like if there is interaction, $\beta_6I{grade}*I_{like}$ is the coefficient of like and grade if there is an interaction, and $\beta_7I_{sex}*I_{grade}*I_{like}$ is the coefficient of sex, grade, and like if there is an interaction with all 3.
+
+The reduced model 3.2 has the same parameters as model 3.1 but without $B_7(Sex:Grade:Like)$ (no interaction). It would be $log(\mu_i)$ = $\beta_0$ + $\beta_1I_{sex=male}$ + $\beta_2I_{grade=nA}$ + $\beta_3I_{like=yes}$ + $\beta_4I_{sex}*I_{grade}$ + $\beta_5I_{sex}*I_{like}$ + $\beta_6I{grade}*I_{like}$$.
+
+### (b)
+#### (i)
+```{r, echo=FALSE, results='hide'}
+
+#LRT and Wald Test for Models 3.1 and 3.2
+anova(model_3.1, model_3.2, test="Chisq")
+wald.test(Sigma = vcov(model_3.1), b=coef(model_3.1), Terms = 8)
+
+```
+Using the likelihood ratio test, the deviance for models 2.1 and 2.2 compared to models 3.1 and 3.2 are the same, as they both have a value of 6.8788
+
+### (ii)
+The wald tests match for 3-way interaction term of 3.1 and 2-way interaction term of 2.1 (p=0.0185)
+2-way interaction between sex and like in 3.2 and the main effect of sex in 2.2 (p=0.0826)
+
+### (iii)
+The interpretations differ slightly; the Logistic models in part 2 predict the log odds of ‘like’ while the Poisson (log-linear) models predict the log of the mean counts.
+
+\newpage
+
+# Appendix
+``` {r, ref.label=knitr::all_labels(), tidy=TRUE, echo=TRUE, eval=TRUE, documentation = 1}
+```
