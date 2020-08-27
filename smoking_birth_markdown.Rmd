@@ -1,8 +1,7 @@
 ---
-title: "Assignment 3 1001569732"
+title: "Assignment 3"
 author:
-- "Ted Si Yuan Cheng"
-- "Student ID: 1001569732"
+- "Ted Cheng"
 date: '2018-03-17'
 output: pdf_document
 ---
